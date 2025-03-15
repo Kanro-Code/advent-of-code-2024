@@ -16,7 +16,9 @@ pub fn split_file(file: &str) -> (Vec<u64>, Vec<u64>) {
         if let (Some(Ok(a)), Some(Ok(b))) = (parts.next(), parts.next()) {
             list1.push(a);
             list2.push(b);
-        }
+        } else {
+			panic!("Failed to parse line: {line}")
+		}
     }
 
 	list1.sort();
