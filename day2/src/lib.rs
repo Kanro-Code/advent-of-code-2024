@@ -33,6 +33,29 @@ impl Report {
     pub fn is_valid_sequence(&self) -> bool {
         (self.is_sorted() || self.is_sorted_dec()) && self.has_valid_diff()
     }
+
+    pub fn is_valid_sequence_tolerance(&self) -> bool {
+        if self.is_valid_sequence() {
+            return true;
+        }
+
+		// This removes a single element at a time and creates a new report, checking if the new report is valid
+        for i in 0..self.list.len() {
+            let new_list: Vec<u8> = self
+                .list
+                .iter()
+                .enumerate()
+                .filter(|(a, _)| *a != i)
+                .map(|(_, b)| *b)
+                .collect();
+		
+            if Report::new(new_list).is_valid_sequence() {
+                return true;
+            }
+        }
+
+        false
+    }
 }
 
 pub fn load_file(path: impl Into<PathBuf>) -> String {
@@ -70,5 +93,13 @@ mod parts {
     }
 
     #[test]
-    fn part2() {}
+    fn part2() {
+        let reports = load_and_create_reports(INPUT);
+        let total = reports
+            .iter()
+            .filter(|e| e.is_valid_sequence_tolerance())
+            .count();
+
+        println!("Solution for day 2, part 2 is: {total}.")
+    }
 }
